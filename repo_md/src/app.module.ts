@@ -25,10 +25,50 @@ import { OrderService } from './order/order.service';
 import { ShippingModule } from './shipping/shipping.module';
 import { ShippingController } from './shipping/shipping.controller';
 import { ShippingService } from './shipping/shipping.service';
+import typeorm from './config/typeorm';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [UserModule, CredentialModule, BusinessModule, ProductModule, CategoryModule, CartModule, OrderModule, ShippingModule],
-  controllers: [AppController, UserController, CredentialController, BusinessController, ProductController, CategoryController, CartController, OrderController, ShippingController],
-  providers: [AppService, UserService, CredentialService, BusinessService, ProductService, CategoryService, CartService, OrderService, ShippingService],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [typeorm],
+    }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => config.get('typeorm') ?? {},
+    }),
+    UserModule,
+    CredentialModule,
+    BusinessModule,
+    ProductModule,
+    CategoryModule,
+    CartModule,
+    OrderModule,
+    ShippingModule,
+  ],
+  controllers: [
+    AppController,
+    UserController,
+    CredentialController,
+    BusinessController,
+    ProductController,
+    CategoryController,
+    CartController,
+    OrderController,
+    ShippingController,
+  ],
+  providers: [
+    AppService,
+    UserService,
+    CredentialService,
+    BusinessService,
+    ProductService,
+    CategoryService,
+    CartService,
+    OrderService,
+    ShippingService,
+  ],
 })
 export class AppModule {}
