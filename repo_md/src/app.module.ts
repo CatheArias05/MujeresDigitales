@@ -28,6 +28,7 @@ import { ShippingService } from './shipping/shipping.service';
 import typeorm from './config/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { OrderDetailModule } from './order_detail/order_detail.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     CartModule,
     OrderModule,
     ShippingModule,
+    OrderDetailModule,
   ],
   controllers: [
     AppController,
