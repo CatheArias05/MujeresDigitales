@@ -37,6 +37,8 @@ const shipping_service_1 = require("./shipping/shipping.service");
 const typeorm_1 = require("./config/typeorm");
 const config_1 = require("@nestjs/config");
 const typeorm_2 = require("@nestjs/typeorm");
+const user_entity_1 = require("./entities/user.entity");
+const credential_entity_1 = require("./entities/credential.entity");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -51,6 +53,7 @@ exports.AppModule = AppModule = __decorate([
                 inject: [config_1.ConfigService],
                 useFactory: (config) => config.get('typeorm') ?? {},
             }),
+            typeorm_2.TypeOrmModule.forFeature([user_entity_1.User, credential_entity_1.Credential]),
             user_module_1.UserModule,
             credential_module_1.CredentialModule,
             business_module_1.BusinessModule,
@@ -73,6 +76,7 @@ exports.AppModule = AppModule = __decorate([
         ],
         providers: [
             app_service_1.AppService,
+            app_service_1.DataLouderUser,
             user_service_1.UserService,
             credential_service_1.CredentialService,
             business_service_1.BusinessService,
