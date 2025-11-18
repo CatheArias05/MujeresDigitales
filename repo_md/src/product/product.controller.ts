@@ -11,12 +11,12 @@ import {
 import { CreateProductDto } from './dtos/createProduct.dto';
 import { UpdateProductDto } from './dtos/updateProduct.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ProductsService } from './product.service';
+import { ProductService } from './product.service';
 
 @ApiTags('Productos')
 @Controller('products')
-export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+export class ProductController {
+  constructor(private readonly productsService: ProductService) {}
 
   //Ruta para obtener un producto por UUID:
   @ApiOperation({ summary: 'Obtener un producto por UUID' })

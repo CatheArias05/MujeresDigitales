@@ -8,7 +8,7 @@ import { Category } from '../entities/categories.entity';
 import { UpdateProductDto } from './dtos/updateProduct.dto';
 
 @Injectable()
-export class ProductsRepository {
+export class ProductRepository {
   constructor(
     @InjectRepository(Product)
     private readonly productDataBase: Repository<Product>,

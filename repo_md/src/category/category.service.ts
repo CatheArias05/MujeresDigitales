@@ -3,13 +3,13 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CategoriesRepository } from './categories.repository';
 import { CreateCategoryDto } from './dtos/createCategory.dto';
 import { UpdateCategoryDto } from './dtos/updateCategory.dto';
+import { CategoryRepository } from './repository';
 
 @Injectable()
-export class CategoriesService {
-  constructor(private readonly categoriesRepository: CategoriesRepository) {}
+export class CategoryService {
+  constructor(private readonly categoriesRepository: CategoryRepository) {}
 
   async getActiveCategories() {
     const categories = await this.categoriesRepository.findActiveCategories();

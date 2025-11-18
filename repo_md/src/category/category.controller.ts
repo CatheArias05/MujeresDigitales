@@ -8,7 +8,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { CategoriesService } from './category.service';
+import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dtos/createCategory.dto';
 import { UpdateCategoryDto } from './dtos/updateCategory.dto';
 import {
@@ -20,8 +20,8 @@ import {
 
 @ApiTags('Categorías')
 @Controller('categories')
-export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) {}
+export class CategoryController {
+  constructor(private readonly categoriesService: CategoryService) {}
 
   //Ruta para obtener las categorías activas:
   @ApiOperation({ summary: 'Obtener las categorías activas' })

@@ -4,18 +4,16 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreateProductDto } from './dtos/createProduct.dto';
-//import { BusinessRepository } from '../business/business.repository';
 import { UpdateProductDto } from './dtos/updateProduct.dto';
 import { Category } from '../entities/categories.entity';
-import { ProductsRepository } from './repository';
-import { CategoriesRepository } from 'src/category/repository';
-//import { Business } from '../entities/business.entity';
+import { ProductRepository } from './repository';
+import { CategoryRepository } from 'src/category/repository';
 
 @Injectable()
-export class ProductsService {
+export class ProductService {
   constructor(
-    private readonly productsRepository: ProductsRepository,
-    private readonly categoriesRepository: CategoriesRepository,
+    private readonly productsRepository: ProductRepository,
+    private readonly categoriesRepository: CategoryRepository,
     private readonly businessRepository: BusinessRepository,
   ) {}
 
