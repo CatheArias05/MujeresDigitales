@@ -9,7 +9,7 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class AppService {
   getHello(): string {
-    return 'Hello World!';
+    return 'Te doy la bienvenida a AgroMarket';
   }
 }
 
