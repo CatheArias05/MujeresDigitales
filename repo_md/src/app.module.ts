@@ -31,6 +31,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrderDetailModule } from './order_detail/order_detail.module';
 import { User } from './entities/user.entity';
 import { Credential } from './entities/credential.entity';
+import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -52,6 +54,12 @@ import { Credential } from './entities/credential.entity';
     OrderModule,
     ShippingModule,
     OrderDetailModule,
+    AuthModule,
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '1h' },
+    }),
   ],
   controllers: [
     AppController,
