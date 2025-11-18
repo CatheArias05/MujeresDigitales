@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppService, DataLouderUser } from './app.service';
 import { UserModule } from './user/user.module';
 import { UserController } from './user/user.controller';
 import { UserService } from './user/user.service';
@@ -28,6 +28,8 @@ import { ShippingService } from './shipping/shipping.service';
 import typeorm from './config/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
+import { Credential } from './entities/credential.entity';
 
 @Module({
   imports: [
@@ -39,6 +41,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => config.get('typeorm') ?? {},
     }),
+    TypeOrmModule.forFeature([User, Credential]),
     UserModule,
     CredentialModule,
     BusinessModule,
@@ -61,6 +64,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   ],
   providers: [
     AppService,
+    DataLouderUser,
     UserService,
     CredentialService,
     BusinessService,
