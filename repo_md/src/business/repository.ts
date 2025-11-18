@@ -99,4 +99,10 @@ export class BusinessRepository {
       message: `El negocio ${businessExisting.nombre_negocio} se desactivo`,
     };
   }
+
+  async findBusinessByUuid(businessUuid: string) {
+    return await this.businessDataBase.findOne({
+      where: { uuid: businessUuid },
+    });
+  }
 }
