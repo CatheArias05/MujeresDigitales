@@ -13,6 +13,7 @@ async function bootstrap() {
     }),
   );
   app.use(loggerGlobal);
+  app.useGlobalPipes(new ValidationPipe());
   await app.listen(process.env.PORT ?? 3002);
   console.log(`Servidor corriendo en el puerto 3002`);
 }
