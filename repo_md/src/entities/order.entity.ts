@@ -14,7 +14,6 @@ import {
 } from 'typeorm';
 import { OrderDetail } from './order_detail.entity';
 import { User } from './user.entity';
-// import { User } from './users.entity';
 
 @Entity({ name: 'orders' })
 export class Order {
