@@ -9,18 +9,24 @@ import {
   Put,
   Query,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { ShippingService } from './shipping.service';
 import { EstadoEnvio } from '../entities/shipping.entity';
 import { CreatedShippingDto } from './Dtos/createShipping.dto';
 import { UpdateShippingDto } from './Dtos/updateShipping.dto';
 import {
+  ApiBearerAuth,
   ApiOperation,
   ApiParam,
   ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Role } from 'src/decorators/roles.decorator';
+import { Roles } from 'src/enum/roles.enum';
+import { AuthGuard } from 'src/auth/Guards/auth.guard';
+import { RolesGuard } from 'src/auth/Guards/roles.guard';
 
 @ApiTags('Envios')
 @Controller('shipping')
@@ -34,6 +40,9 @@ export class ShippingController {
     required: false,
     description: 'Estado del envio a filtrar',
   })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Role(Roles.ADMIN)
   @Get('getAllShipping')
   getAllShipping(@Query('estado_envio') estado_envio?: string) {
     if (estado_envio) {
@@ -51,6 +60,9 @@ export class ShippingController {
   @ApiOperation({ summary: 'Obtener un envio por su ID' })
   @ApiResponse({ status: 200, description: 'Envio obtenido exitosamente.' })
   @ApiParam({ name: 'uuid', description: 'ID del envio' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Role(Roles.ADMIN)
   @Get('getShippingById/:uuid')
   getShippingById(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.shippingService.getShippingByIdService(uuid);
@@ -58,6 +70,9 @@ export class ShippingController {
 
   @ApiOperation({ summary: 'Crear un envio' })
   @ApiResponse({ status: 201, description: 'Envio creado exitosamente.' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Role(Roles.ADMIN)
   @Post('createShipping')
   postCreateShipping(@Body() createShippingDto: CreatedShippingDto) {
     return this.shippingService.postCreateShippingService(createShippingDto);
@@ -65,6 +80,9 @@ export class ShippingController {
 
   @ApiOperation({ summary: 'Actualizar un envio' })
   @ApiResponse({ status: 200, description: 'Envio actualizado exitosamente.' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Role(Roles.ADMIN)
   @Put('updateShipping')
   putUpdateShipping(@Body() updateShippingDto: UpdateShippingDto) {
     return this.shippingService.putUpdateShippingService(updateShippingDto);
@@ -73,6 +91,9 @@ export class ShippingController {
   @ApiOperation({ summary: 'Eliminar un envio' })
   @ApiResponse({ status: 200, description: 'Envio eliminado exitosamente.' })
   @ApiParam({ name: 'uuid', description: 'ID del envio' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Role(Roles.ADMIN)
   @Delete('deleteShipping/:uuid')
   deleteShipping(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.shippingService.deleteShippingService(uuid);
