@@ -35,6 +35,16 @@ export class ShippingService {
     return shipments;
   }
 
+  async getShippingByOrderUuidService(orderUuid: string) {
+    const shipping = await this.shippingRepository.getShippingByOrderUuid(
+      orderUuid,
+    );
+    if (!shipping) {
+      throw new NotFoundException('No existe envio para esta orden');
+    }
+    return shipping;
+  }
+
   async postCreateShippingService(createShippingDto: CreatedShippingDto) {
     if (!createShippingDto.uuid_orden_de_compra) {
       throw new BadRequestException('uuid_orden_de_compra es requerido');
@@ -49,14 +59,12 @@ export class ShippingService {
     return this.shippingRepository.createShippingRepository(createShippingDto);
   }
 
-  async putUpdateShippingService(updateShippingDto: UpdateShippingDto) {
-    if (!updateShippingDto.uuid) {
-      throw new BadRequestException('uuid es requerido');
-    }
+  async putUpdateShippingService(
+    uuid: string,
+    updateShippingDto: UpdateShippingDto,
+  ) {
     const shippingExisting =
-      await this.shippingRepository.getShippingByIdRepository(
-        updateShippingDto.uuid,
-      );
+      await this.shippingRepository.getShippingByIdRepository(uuid);
     if (!shippingExisting) {
       throw new NotFoundException('No existe el envio');
     }

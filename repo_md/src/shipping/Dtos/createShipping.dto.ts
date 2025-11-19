@@ -1,8 +1,10 @@
 import { EstadoEnvio } from '../../entities/shipping.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsUUID, IsOptional, IsDateString, IsEnum } from 'class-validator';
 
 export class CreatedShippingDto {
   @ApiProperty({ description: 'UUID de la orden de compra asociada' })
+  @IsUUID()
   uuid_orden_de_compra: string;
 
   @ApiProperty({
@@ -10,6 +12,8 @@ export class CreatedShippingDto {
     required: false,
     example: '2025-01-15T10:00:00Z',
   })
+  @IsOptional()
+  @IsDateString()
   fecha_emision?: string;
 
   @ApiProperty({
@@ -17,6 +21,8 @@ export class CreatedShippingDto {
     required: false,
     example: '2025-01-20T16:30:00Z',
   })
+  @IsOptional()
+  @IsDateString()
   fecha_entrega?: string;
 
   @ApiProperty({
@@ -24,5 +30,7 @@ export class CreatedShippingDto {
     required: false,
     enum: EstadoEnvio,
   })
+  @IsOptional()
+  @IsEnum(EstadoEnvio)
   estado_envio?: EstadoEnvio;
 }

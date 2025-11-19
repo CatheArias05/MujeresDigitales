@@ -33,28 +33,15 @@ import { RolesGuard } from 'src/auth/Guards/roles.guard';
 export class ShippingController {
   constructor(private readonly shippingService: ShippingService) {}
 
-  @ApiOperation({ summary: 'Obtener todos los envios' })
-  @ApiResponse({ status: 200, description: 'Envios obtenidos exitosamente.' })
-  @ApiQuery({
-    name: 'estado_envio',
-    required: false,
-    description: 'Estado del envio a filtrar',
-  })
+  @ApiOperation({ summary: 'Obtener envio por UUID' })
+  @ApiResponse({ status: 200, description: 'Envio obtenido exitosamente.' })
+  @ApiParam({ name: 'uuid', description: 'ID del envio' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Role(Roles.ADMIN)
-  @Get('getAllShipping')
-  getAllShipping(@Query('estado_envio') estado_envio?: string) {
-    if (estado_envio) {
-      const allowed = Object.values(EstadoEnvio);
-      if (!allowed.includes(estado_envio as EstadoEnvio)) {
-        throw new BadRequestException('estado_envio inválido');
-      }
-      return this.shippingService.getShippingByEstadoService(
-        estado_envio as EstadoEnvio,
-      );
-    }
-    return this.shippingService.getAllShippingService();
+  @Get('getAllShipping/:uuid')
+  getAllShipping(@Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.shippingService.getShippingByIdService(uuid);
   }
 
   @ApiOperation({ summary: 'Obtener un envio por su ID' })
@@ -66,6 +53,19 @@ export class ShippingController {
   @Get('getShippingById/:uuid')
   getShippingById(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.shippingService.getShippingByIdService(uuid);
+  }
+
+  @ApiOperation({ summary: 'Obtener envio por UUID de la orden' })
+  @ApiResponse({ status: 200, description: 'Envio obtenido exitosamente.' })
+  @ApiParam({ name: 'uuid_order', description: 'ID de la orden' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Role(Roles.ADMIN)
+  @Get('getShippingByOrder/:uuid_order')
+  getShippingByOrder(
+    @Param('uuid_order', ParseUUIDPipe) uuid_order: string,
+  ) {
+    return this.shippingService.getShippingByOrderUuidService(uuid_order);
   }
 
   @ApiOperation({ summary: 'Crear un envio' })
@@ -83,9 +83,13 @@ export class ShippingController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Role(Roles.ADMIN)
-  @Put('updateShipping')
-  putUpdateShipping(@Body() updateShippingDto: UpdateShippingDto) {
-    return this.shippingService.putUpdateShippingService(updateShippingDto);
+  @ApiParam({ name: 'uuid', description: 'ID del envio' })
+  @Put('updateShipping/:uuid')
+  putUpdateShipping(
+    @Param('uuid', ParseUUIDPipe) uuid: string,
+    @Body() updateShippingDto: UpdateShippingDto,
+  ) {
+    return this.shippingService.putUpdateShippingService(uuid, updateShippingDto);
   }
 
   @ApiOperation({ summary: 'Eliminar un envio' })
