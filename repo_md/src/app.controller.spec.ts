@@ -15,8 +15,10 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('debe retornar el saludo de AgroMarket', () => {
+      expect(appController.getHello()).toBe(
+        'Te doy la bienvenida a AgroMarket',
+      );
     });
   });
 });
