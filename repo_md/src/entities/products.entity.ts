@@ -6,10 +6,12 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { Category } from './categories.entity';
 import { Business } from './business.entity';
+import { OrderDetail } from './order_detail.entity';
 
 @Entity({ name: 'products' })
 export class Product {
@@ -70,6 +72,9 @@ export class Product {
     nullable: true,
   })
   imageUrl: string;
+
+  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.product)
+  orderProducts: OrderDetail[];
 
   @CreateDateColumn({ type: 'timestamp' })
   createAt: Date;

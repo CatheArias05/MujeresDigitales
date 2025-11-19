@@ -4,6 +4,8 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Order } from './order.entity';
 import { Product } from './products.entity';
@@ -15,7 +17,7 @@ export class OrderDetail {
 
   @ManyToOne(() => Order, (order) => order.order_details)
   @JoinColumn({ name: 'uuid_order' })
-  uuid_order: Order;
+  uuid_order: Order | string;
 
   @ManyToOne(() => Product)
   @JoinColumn({ name: 'uuid_product' })
@@ -47,13 +49,13 @@ export class OrderDetail {
   })
   subtotal: number;
 
-  @Column({
+  @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
   date_created: Date;
 
-  @Column({
+  @UpdateDateColumn({
     type: 'timestamp',
     nullable: true,
   })

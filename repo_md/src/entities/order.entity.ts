@@ -4,13 +4,12 @@ import { PayStatus } from 'src/enum/pay_status.enum';
 import {
   Entity,
   PrimaryGeneratedColumn,
-  //   JoinColumn,
   Column,
   OneToMany,
   JoinColumn,
   ManyToOne,
-  // OneToMany,
-  //   ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { OrderDetail } from './order_detail.entity';
 import { Shipping } from './shipping.entity';
@@ -58,13 +57,13 @@ export class Order {
   })
   pay_status: PayStatus;
 
-  @Column({
+  @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
   date_created: Date;
 
-  @Column({
+  @UpdateDateColumn({
     type: 'timestamp',
     nullable: true,
   })
