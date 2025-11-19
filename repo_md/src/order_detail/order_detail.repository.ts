@@ -30,10 +30,25 @@ export class OrderDetailRepository {
       throw new NotFoundException('Orden o Producto no encontrado');
     }
 
+    const { cant, iva_applied, discount } = CreateOrderDetailDto;
+
+    const totalProductsPrice = product.basePrice * cant;
+    const totalIva = totalProductsPrice * ((iva_applied ?? 0) / 100);
+    const totalDiscount = totalProductsPrice * ((discount ?? 0) / 100);
+
+    const total = totalProductsPrice + totalIva - totalDiscount;
+
+    if (CreateOrderDetailDto.subtotal !== total) {
+      throw new Error(
+        'Los subtotales no coinciden, hay un error en el calculo',
+      );
+    }
+
     const newOrderProduct = this.orderDetailDataBase.create({
       ...CreateOrderDetailDto,
       order: order,
       product: product,
+      subtotal: total,
     });
 
     return this.orderDetailDataBase.save(newOrderProduct);
@@ -56,8 +71,24 @@ export class OrderDetailRepository {
       const product = await this.productDataBase.findOne({
         where: { uuid: data.product.uuid },
       });
-      if (!product) throw new NotFoundException('Producto no encontrado');
+      if (!product) {
+        throw new NotFoundException('Producto no encontrado');
+      }
+      const { cant, iva_applied, discount } = updateData;
+
+      const totalProductsPrice = product.basePrice * (cant ?? 1);
+      const totalIva = totalProductsPrice * ((iva_applied ?? 0) / 100);
+      const totalDiscount = totalProductsPrice * ((discount ?? 0) / 100);
+
+      const total = totalProductsPrice + totalIva - totalDiscount;
+
+      if (updateData.subtotal !== total) {
+        throw new Error(
+          'Los subtotales no coinciden, hay un error en el cálculo',
+        );
+      }
       updateData.product = product;
+      updateData.subtotal = total;
     }
     if (data.order.uuid_order) {
       const order = await this.orderDataBase.findOne({
