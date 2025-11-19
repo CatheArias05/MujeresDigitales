@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from 'src/entities/order.entity';
+import { OrderDetailRepository } from 'src/order_detail/order_detail.repository';
 import { Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/createOrder.dto';
 import { User } from 'src/entities/user.entity';
@@ -11,6 +12,7 @@ export class OrderRepository {
   constructor(
     @InjectRepository(Order) private readonly orderDataBase: Repository<Order>,
     @InjectRepository(User) private readonly userDataBase: Repository<User>,
+    private readonly orderDetailRepository: OrderDetailRepository,
   ) {}
 
   async createOrder(CreateOrderDto: CreateOrderDto) {
@@ -42,8 +44,57 @@ export class OrderRepository {
   }
 
   async update(orderExisting: Order, updateOrderDto: UpdateOrderDto) {
-    orderExisting = { ...orderExisting, ...updateOrderDto };
+    // merge basic fields
+    const { order_details, ...orderFields } = updateOrderDto;
+    orderExisting = { ...orderExisting, ...orderFields };
     await this.orderDataBase.save(orderExisting);
+
+    // If order_details are provided, sync them: create new, update existing, delete removed
+    if (Array.isArray(order_details)) {
+      const existingDetails = orderExisting.order_details ?? [];
+
+      // Map existing by id for quick lookup
+      const existingMap = new Map<string, any>();
+      for (const d of existingDetails) existingMap.set(d.uuid_order_detail, d);
+
+      const incomingIds = new Set<string>();
+
+      for (const item of order_details) {
+        if (item.uuid_order_detail) {
+          // update existing
+          incomingIds.add(item.uuid_order_detail);
+          // do not allow changing order on detail here
+          const { uuid_order_detail, ...detailUpdate } = item;
+          await this.orderDetailRepository.update(
+            uuid_order_detail,
+            detailUpdate,
+          );
+        } else {
+          // create new and link to order
+          if (!item.uuid_product) {
+            throw new Error(
+              'uuid_product is required when creating order detail',
+            );
+          }
+          await this.orderDetailRepository.create({
+            uuid_order: orderExisting.uuid_order,
+            uuid_product: item.uuid_product,
+            cant: item.cant,
+            iva_applied: item.iva_applied,
+            discount: item.discount,
+            subtotal: item.subtotal,
+          });
+        }
+      }
+
+      // delete details that are in DB but not in incoming payload
+      for (const existing of existingDetails) {
+        if (!incomingIds.has(existing.uuid_order_detail)) {
+          await this.orderDetailRepository.remove(existing.uuid_order_detail);
+        }
+      }
+    }
+
     console.log(`Se actualizó la orden: ${orderExisting.uuid_order}`);
     return {
       message: `Orden actualizada en la base de datos: ${orderExisting.uuid_order}`,

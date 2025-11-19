@@ -9,6 +9,8 @@ import {
   OneToMany,
   JoinColumn,
   ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
   // OneToMany,
   //   ManyToOne,
 } from 'typeorm';
@@ -57,18 +59,18 @@ export class Order {
   })
   pay_status: PayStatus;
 
-  @Column({
+  @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
   date_created: Date;
 
-  @Column({
+  @UpdateDateColumn({
     type: 'timestamp',
     nullable: true,
   })
   date_updated: Date;
 
-  @OneToMany(() => OrderDetail, (orderDetails) => orderDetails.uuid_order)
+  @OneToMany(() => OrderDetail, (orderDetails) => orderDetails.order)
   order_details: OrderDetail[];
 }

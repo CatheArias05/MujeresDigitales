@@ -1,17 +1,14 @@
 import {
   Entity,
   PrimaryGeneratedColumn,
-  //   JoinColumn,
   Column,
   ManyToOne,
   JoinColumn,
-  // OneToMany,
-  //   ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Order } from './order.entity';
-// import { User } from './users.entity';
-// import { OrderStatus } from 'src/enum/orderStatus.enum';
-// import { OrderProduct } from './order_product.entity';
+import { Product } from './products.entity';
 
 @Entity({ name: 'orderDetails' })
 export class OrderDetail {
@@ -20,11 +17,11 @@ export class OrderDetail {
 
   @ManyToOne(() => Order, (order) => order.order_details)
   @JoinColumn({ name: 'uuid_order' })
-  uuid_order: Order;
+  order: Order;
 
-  // @ManyToOne(() => Product, (product) => product.orderProducts)
-  // @JoinColumn({ name: 'uuid_product' })
-  // product: Product;
+  @ManyToOne(() => Product, (product) => product.orderProducts)
+  @JoinColumn({ name: 'uuid_product' })
+  product: Product;
 
   @Column({
     type: 'int',
@@ -52,13 +49,13 @@ export class OrderDetail {
   })
   subtotal: number;
 
-  @Column({
+  @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
   date_created: Date;
 
-  @Column({
+  @UpdateDateColumn({
     type: 'timestamp',
     nullable: true,
   })
