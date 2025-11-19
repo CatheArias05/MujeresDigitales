@@ -11,6 +11,7 @@ import { Roles } from 'src/enum/roles.enum';
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
+
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
@@ -18,16 +19,26 @@ export class RolesGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
+
+    if (!requiredRoles || requiredRoles.length === 0) return true;
+
     const request = context.switchToHttp().getRequest();
     const payload = request.user;
 
-    const hasRole = () => requiredRoles.some(payload?.rol?.includes(Roles));
-    const validate = payload && payload.roles && hasRole();
-    if (!validate) {
+    if (!payload || !payload.role) {
       throw new ForbiddenException(
         'No tienes permisos para acceder a este contenido',
       );
     }
-    return validate;
+
+    const hasRole = requiredRoles.some((role) => payload.role.includes(role));
+
+    if (!hasRole) {
+      throw new ForbiddenException(
+        'No tienes permisos para acceder a este contenido',
+      );
+    }
+
+    return true;
   }
 }
