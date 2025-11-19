@@ -6,7 +6,7 @@ import { CreateCategoryDto } from './dtos/createCategory.dto';
 import { UpdateCategoryDto } from './dtos/updateCategory.dto';
 
 @Injectable()
-export class CategoriesRepository {
+export class CategoryRepository {
   constructor(
     @InjectRepository(Category)
     private readonly categoryDataBase: Repository<Category>,

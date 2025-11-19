@@ -7,8 +7,9 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
-import { CategoriesService } from './category.service';
+import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dtos/createCategory.dto';
 import { UpdateCategoryDto } from './dtos/updateCategory.dto';
 import {
@@ -17,11 +18,15 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Role } from 'src/decorators/roles.decorator';
+import { AuthGuard } from 'src/auth/Guards/auth.guard';
+import { RolesGuard } from 'src/auth/Guards/roles.guard';
+import { Roles } from 'src/enum/roles.enum';
 
 @ApiTags('Categorías')
 @Controller('categories')
-export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) {}
+export class CategoryController {
+  constructor(private readonly categoriesService: CategoryService) {}
 
   //Ruta para obtener las categorías activas:
   @ApiOperation({ summary: 'Obtener las categorías activas' })
@@ -55,7 +60,7 @@ export class CategoriesController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(UserRoles.ADMIN)
+  @Role(Roles.ADMIN)
   @Post('createCategory')
   postCreateCategory(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoriesService.postCreateCategory(createCategoryDto);
@@ -80,7 +85,7 @@ export class CategoriesController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(UserRoles.ADMIN)
+  @Role(Roles.ADMIN)
   @Put('updateCategory')
   putUpdateCategory(@Body() updateCategoryDto: UpdateCategoryDto) {
     return this.categoriesService.putUpdateCategory(updateCategoryDto);
@@ -107,7 +112,7 @@ export class CategoriesController {
   })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(UserRoles.ADMIN)
+  @Role(Roles.ADMIN)
   @Put('activate/:uuid')
   activateCategory(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.categoriesService.activateCategory(uuid);
@@ -134,7 +139,7 @@ export class CategoriesController {
   })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(UserRoles.ADMIN)
+  @Role(Roles.ADMIN)
   @Delete('deleteCategory/:uuid')
   deleteCategory(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.categoriesService.deleteCategory(uuid);
