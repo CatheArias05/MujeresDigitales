@@ -6,12 +6,15 @@ import { CreateOrderDto } from './dto/createOrder.dto';
 import { User } from 'src/entities/user.entity';
 import { UpdateOrderDto } from 'src/order/dto/updateOrder.dto';
 import { UpdateOrderDetailDto } from 'src/order_detail/dto/update-order-detail.dto';
+import { OrderDetail } from 'src/entities/order_detail.entity';
+import { OrderDetailService } from 'src/order_detail/order_detail.service';
 
 @Injectable()
 export class OrderRepository {
   constructor(
     @InjectRepository(Order) private readonly orderDataBase: Repository<Order>,
     @InjectRepository(User) private readonly userDataBase: Repository<User>,
+    private readonly OrderDetailService: OrderDetailService,
   ) {}
 
   async createOrder(CreateOrderDto: CreateOrderDto) {
@@ -60,9 +63,9 @@ export class OrderRepository {
           incomingIds.add(item.uuid_order_detail);
           // do not allow changing order on detail here
           const { uuid_order_detail, ...detailUpdate } = item;
-          await this.orderDetailRepository.update(
+          await this.OrderDetailService.update(
             uuid_order_detail,
-            detailUpdate as UpdateOrderDetailDto,
+            detailUpdate,
           );
         } else {
           // create new and link to order

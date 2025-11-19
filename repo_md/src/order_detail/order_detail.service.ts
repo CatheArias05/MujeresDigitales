@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { OrderDetailRepository } from './order_detail.repository';
 import { OrderDetail } from 'src/entities/order_detail.entity';
+import { UpdateOrderDetailDto } from './dto/update-order-detail.dto';
 
 @Injectable()
 export class OrderDetailService {
@@ -18,7 +19,7 @@ export class OrderDetailService {
     return this.orderRepository.findById(id);
   }
 
-  update(id: string, data: Partial<OrderDetail>) {
+  update(id: string, data: UpdateOrderDetailDto) {
     return this.orderRepository.update(id, data);
   }
 
