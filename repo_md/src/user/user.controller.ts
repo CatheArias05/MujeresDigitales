@@ -33,8 +33,9 @@ export class UserController {
   @ApiOperation({ summary: 'Obtener todos los usuarios' })
   @ApiResponse({ status: 200, description: 'Usuarios obtenidos' })
   @ApiBearerAuth()
-  @Get('getAllUsers')
   @UseGuards(AuthGuard, RolesGuard)
+  @Role(Roles.ADMIN)
+  @Get('getAllUsers')
   getAllUsers() {
     return this.userService.getAllUsersService();
   }
@@ -42,8 +43,9 @@ export class UserController {
   @ApiOperation({ summary: 'Buscar usuario por nombre' })
   @ApiResponse({ status: 200, description: 'Usuario encontrado' })
   @ApiBearerAuth()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Role(Roles.ADMIN)
   @Get('getUserByName')
-  @UseGuards(AuthGuard)
   getUserByName(@Query('name') name: string) {
     return this.userService.getUserByNameService(name);
   }
@@ -53,18 +55,16 @@ export class UserController {
   @ApiResponse({ status: 404, description: 'No encontrado' })
   @ApiParam({ name: 'uuid' })
   @ApiBearerAuth()
-  @Get('getUserById/:uuid')
   @UseGuards(AuthGuard, RolesGuard)
   @Role(Roles.ADMIN)
+  @Get('getUserById/:uuid')
   getUserById(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.userService.getUserByIdService(uuid);
   }
 
   @ApiOperation({ summary: 'Crear usuario' })
   @ApiResponse({ status: 201, description: 'Usuario creado' })
-  @ApiBearerAuth()
   @Post('createUser')
-  @Role(Roles.ADMIN)
   createUser(@Body() dto: CreateUserDto) {
     return this.userService.createUserService(dto);
   }
@@ -72,9 +72,9 @@ export class UserController {
   @ApiOperation({ summary: 'Actualizar usuario' })
   @ApiResponse({ status: 200, description: 'Usuario actualizado' })
   @ApiBearerAuth()
-  @Patch('updateUser')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard, RolesGuard)
   @Role(Roles.CUSTOMER)
+  @Patch('updateUser')
   updateUser(@Body() dto: UpdateUserDto) {
     return this.userService.updateUserService(dto);
   }
@@ -83,9 +83,9 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Usuario eliminado' })
   @ApiParam({ name: 'uuid' })
   @ApiBearerAuth()
-  @Delete('deleteUser/:uuid')
   @UseGuards(AuthGuard, RolesGuard)
   @Role(Roles.ADMIN)
+  @Delete('deleteUser/:uuid')
   deleteUser(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.userService.deleteUserService(uuid);
   }
