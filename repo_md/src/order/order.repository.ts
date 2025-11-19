@@ -24,6 +24,15 @@ export class OrderRepository {
     if (!user) {
       throw new Error('Usuario no encontrado');
     }
+
+    const totalComputed = CreateOrderDto.order_details?.reduce(
+      (acum, current) => acum + current.subtotal,
+      0,
+    );
+
+    if (CreateOrderDto.total !== totalComputed) {
+      throw new Error('El total esta mal calculado');
+    }
     const newOrder = this.orderDataBase.create({
       ...CreateOrderDto,
       user: user,
@@ -45,24 +54,28 @@ export class OrderRepository {
   }
 
   async update(orderExisting: Order, updateOrderDto: UpdateOrderDto) {
-    // merge basic fields
+    // fusionar campos básicos
     const { order_details, ...orderFields } = updateOrderDto;
     orderExisting = { ...orderExisting, ...orderFields };
+    const totalComputed = order_details?.reduce(
+      (acum, current) => acum + current.subtotal,
+      0,
+    );
+
+    if (updateOrderDto.total !== totalComputed) {
+      throw new Error('El total esta mal calculado');
+    }
     await this.orderDataBase.save(orderExisting);
 
-    // If order_details are provided, sync them: create new, update existing, delete removed
+    // Si se proporcionan los detalles del pedido, sincroniza, actualiza uno existente o elimine uno eliminado.
     if (Array.isArray(order_details)) {
       const existingDetails = orderExisting.order_details ?? [];
-
-      // Map existing by id for quick lookup
-      const existingMap = new Map<string, any>();
-      for (const d of existingDetails) existingMap.set(d.uuid_order_detail, d);
 
       const incomingIds = new Set<string>();
 
       for (const item of order_details) {
         if (item.uuid_order_detail) {
-          // update existing
+          // update existente
           incomingIds.add(item.uuid_order_detail);
           // do not allow changing order on detail here
           const { uuid_order_detail, ...detailUpdate } = item;
@@ -71,7 +84,7 @@ export class OrderRepository {
             detailUpdate as UpdateOrderDetailDto,
           );
         } else {
-          // create new and link to order
+          // crea nuevo y vincula al pedido
           if (!item.uuid_product) {
             throw new Error(
               'uuid_product is required when creating order detail',
@@ -88,7 +101,7 @@ export class OrderRepository {
         }
       }
 
-      // delete details that are in DB but not in incoming payload
+      // Elimina detalles que estén en la base de datos pero no en el payload.
       for (const existing of existingDetails) {
         if (!incomingIds.has(existing.uuid_order_detail)) {
           await this.orderDetailRepository.remove(existing.uuid_order_detail);
