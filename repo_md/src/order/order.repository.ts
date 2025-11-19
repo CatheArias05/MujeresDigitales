@@ -7,6 +7,7 @@ import { User } from 'src/entities/user.entity';
 import { UpdateOrderDto } from 'src/order/dto/updateOrder.dto';
 import { OrderDetailRepository } from 'src/order_detail/order_detail.repository';
 import { UpdateOrderDetailDto } from 'src/order_detail/dto/update-order-detail.dto';
+import { OrderStatus } from 'src/enum/order_status.enum';
 
 @Injectable()
 export class OrderRepository {
@@ -106,9 +107,12 @@ export class OrderRepository {
     };
   }
 
-  async delete(id: string) {
-    const res = await this.orderDataBase.delete({ uuid_order: id });
-    if (res.affected === 0)
-      throw new NotFoundException(`Order ${id} not found`);
+  async delete(orderExisting: Order) {
+    orderExisting.order_status = OrderStatus.DISABLED;
+    const res = await this.orderDataBase.save(orderExisting);
+    if (!res)
+      throw new NotFoundException(
+        `Order ${orderExisting.uuid_order} no se pudo desactivar`,
+      );
   }
 }

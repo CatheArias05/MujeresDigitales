@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { OrderRepository } from './order.repository';
-import { Order } from 'src/entities/order.entity';
 import { CreateOrderDto } from './dto/createOrder.dto';
 import { UpdateOrderDto } from './dto/updateOrder.dto';
 
@@ -35,6 +34,6 @@ export class OrderService {
     if (!orderExisting) {
       throw new Error('Orden no encontrada');
     }
-    return this.orderRepository.delete(id);
+    return this.orderRepository.delete(orderExisting);
   }
 }

@@ -50,8 +50,8 @@ export class OrderController {
     return this.orderService.update(id, UpdateOrderDto);
   }
 
-  @ApiOperation({ summary: 'Eliminar orden' })
-  @ApiResponse({ status: 200, description: 'Orden eliminada' })
+  @ApiOperation({ summary: 'Desactivar orden' })
+  @ApiResponse({ status: 200, description: 'Orden desactivada' })
   @Delete(':id')
   delete(@Param('id', ParseUUIDPipe) id: string) {
     return this.orderService.delete(id);
