@@ -49,8 +49,8 @@ export class BusinessService {
   }
 
   async postCreateBusinessService(createBusinessDto: CreatedBusinessDto) {
-    if (!createBusinessDto.uuid_usuario) {
-      throw new BadRequestException('uuid_usuario es requerido');
+    if (!createBusinessDto.uuid_user) {
+      throw new BadRequestException('uuid_user es requerido');
     }
     if (!createBusinessDto.registro_negocio) {
       throw new BadRequestException('registro_negocio es requerido');
@@ -81,10 +81,10 @@ export class BusinessService {
       }
     }
 
-    if (createBusinessDto.uuid_usuario) {
+    if (createBusinessDto.uuid_user) {
       const userBusinessExisting =
         await this.businessRepository.getBusinessByUserUuid(
-          createBusinessDto.uuid_usuario,
+          createBusinessDto.uuid_user,
         );
       if (userBusinessExisting) {
         throw new ConflictException(
@@ -96,14 +96,12 @@ export class BusinessService {
     return this.businessRepository.createBusinessRepository(createBusinessDto);
   }
 
-  async putUpdateBusinessService(updateBusinessDto: UpdateBusinessDto) {
-    if (!updateBusinessDto.uuid) {
-      throw new BadRequestException('uuid es requerido');
-    }
+  async putUpdateBusinessService(
+    uuid: string,
+    updateBusinessDto: UpdateBusinessDto,
+  ) {
     const businessExisting =
-      await this.businessRepository.getBusinessByIdRepository(
-        updateBusinessDto.uuid,
-      );
+      await this.businessRepository.getBusinessByIdRepository(uuid);
     if (!businessExisting) {
       throw new NotFoundException('No existe el negocio');
     }

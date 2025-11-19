@@ -50,7 +50,7 @@ export class BusinessRepository {
 
   async createBusinessRepository(createBusinessDto: any) {
     const newBusiness = this.businessDataBase.create({
-      user: { uuid_user: createBusinessDto.uuid_usuario } as any,
+      user: { uuid_user: createBusinessDto.uuid_user } as any,
       registro_negocio: createBusinessDto.registro_negocio,
       nombre_negocio: createBusinessDto.nombre_negocio,
       ubicacion: createBusinessDto.ubicacion,
@@ -68,9 +68,9 @@ export class BusinessRepository {
     businessExisting: Business,
     updateBusinessDto: any,
   ) {
-    if (updateBusinessDto.uuid_usuario) {
+    if (updateBusinessDto.uuid_user) {
       businessExisting.user = {
-        uuid_user: updateBusinessDto.uuid_usuario,
+        uuid_user: updateBusinessDto.uuid_user,
       } as any;
     }
     if (updateBusinessDto.registro_negocio) {

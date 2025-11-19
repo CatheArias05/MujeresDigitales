@@ -31,19 +31,12 @@ import { Roles } from 'src/enum/roles.enum';
 export class BusinessController {
   constructor(private readonly businessService: BusinessService) {}
 
-  @ApiOperation({ summary: 'Obtener todos los negocios' })
-  @ApiResponse({ status: 200, description: 'Negocios obtenidos exitosamente.' })
-  @ApiQuery({
-    name: 'name',
-    required: false,
-    description: 'Nombre del negocio a buscar',
-  })
-  @Get('getAllBusiness')
-  getAllBusiness(@Query('name') name?: string) {
-    if (name) {
-      return this.businessService.getBusinessByNameService(name);
-    }
-    return this.businessService.getAllBusinessService();
+  @ApiOperation({ summary: 'Obtener negocio por UUID' })
+  @ApiResponse({ status: 200, description: 'Negocio obtenido exitosamente.' })
+  @ApiParam({ name: 'uuid', description: 'ID del negocio' })
+  @Get('getAllBusiness/:uuid')
+  getAllBusiness(@Param('uuid', ParseUUIDPipe) uuid: string) {
+    return this.businessService.getBusinessByIdService(uuid);
   }
 
   @ApiOperation({ summary: 'Obtener un negocio por su ID' })
@@ -85,9 +78,16 @@ export class BusinessController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Role(Roles.ADMIN, Roles.PRODUCER)
-  @Put('updateBusiness')
-  putUpdateBusiness(@Body() updateBusinessDto: UpdateBusinessDto) {
-    return this.businessService.putUpdateBusinessService(updateBusinessDto);
+  @ApiParam({ name: 'uuid', description: 'ID del negocio' })
+  @Put('updateBusiness/:uuid')
+  putUpdateBusiness(
+    @Param('uuid', ParseUUIDPipe) uuid: string,
+    @Body() updateBusinessDto: UpdateBusinessDto,
+  ) {
+    return this.businessService.putUpdateBusinessService(
+      uuid,
+      updateBusinessDto,
+    );
   }
 
   @ApiOperation({ summary: 'Eliminar (soft-delete) un negocio' })
