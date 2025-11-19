@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { OrderDetailService } from './order_detail.service';
 import { OrderDetailRepository } from './order_detail.repository';
+import { OrderRepository } from 'src/order/order.repository';
 
 describe('OrderDetailService', () => {
   let service: OrderDetailService;
@@ -12,9 +13,17 @@ describe('OrderDetailService', () => {
     remove: jest.fn(),
   } as unknown as OrderDetailRepository;
 
+  const orderRepo = {
+    getById: jest.fn(),
+  } as unknown as OrderRepository;
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [OrderDetailService, { provide: OrderDetailRepository, useValue: repo }],
+      providers: [
+        OrderDetailService,
+        { provide: OrderDetailRepository, useValue: repo },
+        { provide: OrderRepository, useValue: orderRepo },
+      ],
     }).compile();
     service = module.get<OrderDetailService>(OrderDetailService);
     jest.clearAllMocks();
@@ -30,5 +39,11 @@ describe('OrderDetailService', () => {
     (repo.findAll as any).mockResolvedValue([{ uuid_order_detail: '1' }]);
     const res = await service.findAll();
     expect(res).toHaveLength(1);
+  });
+
+  it('getByOrderId usa OrderRepository', async () => {
+    (orderRepo.getById as any).mockResolvedValue({ uuid_order: 'o1' });
+    const res = await service.getByOrderId('o1');
+    expect(res.uuid_order).toBe('o1');
   });
 });
