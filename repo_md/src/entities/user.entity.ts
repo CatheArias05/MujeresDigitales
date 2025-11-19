@@ -1,10 +1,12 @@
 import { Roles } from 'src/enum/roles.enum';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Credential } from './credential.entity';
 import { Order } from './order.entity';
@@ -38,10 +40,10 @@ export class User {
   @Column({ type: 'boolean', default: true })
   status: boolean;
 
-  @Column({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp' })
   creation_date: Date;
 
-  @Column({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'timestamp' })
   update_date: Date;
 
   @OneToOne(() => Credential, (credential) => credential.user)

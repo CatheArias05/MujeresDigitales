@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/createOrder.dto';
 import { User } from 'src/entities/user.entity';
 import { UpdateOrderDto } from 'src/order/dto/updateOrder.dto';
+import { UpdateOrderDetailDto } from 'src/order_detail/dto/update-order-detail.dto';
 
 @Injectable()
 export class OrderRepository {
@@ -67,7 +68,7 @@ export class OrderRepository {
           const { uuid_order_detail, ...detailUpdate } = item;
           await this.orderDetailRepository.update(
             uuid_order_detail,
-            detailUpdate,
+            detailUpdate as UpdateOrderDetailDto,
           );
         } else {
           // create new and link to order

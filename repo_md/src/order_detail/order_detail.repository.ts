@@ -5,6 +5,7 @@ import { OrderDetail } from 'src/entities/order_detail.entity';
 import { Repository } from 'typeorm';
 import { CreateOrderDetailDto } from './dto/create-order-detail.dto';
 import { Product } from 'src/entities/products.entity';
+import { UpdateOrderDetailDto } from './dto/update-order-detail.dto';
 
 @Injectable()
 export class OrderDetailRepository {
@@ -49,7 +50,7 @@ export class OrderDetailRepository {
     });
   }
 
-  async update(id: string, data: OrderDetail) {
+  async update(id: string, data: UpdateOrderDetailDto) {
     const updateData = { ...data };
     if (data.product.uuid) {
       const product = await this.productDataBase.findOne({
