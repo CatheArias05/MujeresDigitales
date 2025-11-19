@@ -3,6 +3,9 @@ import { OrderDetail } from 'src/entities/order_detail.entity';
 import { OrderStatus } from 'src/enum/order_status.enum';
 import { PayMethod } from 'src/enum/pay_method.enum';
 import { PayStatus } from 'src/enum/pay_status.enum';
+import { IsArray, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+import { OrderDetailItemDto } from './order-detail-item.dto';
 
 export class UpdateOrderDto {
   @IsOptional()
@@ -26,5 +29,9 @@ export class UpdateOrderDto {
   @IsEnum(PayStatus)
   pay_status?: PayStatus;
 
-  order_details: OrderDetail[];
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => OrderDetailItemDto)
+  order_details?: OrderDetailItemDto[];
 }

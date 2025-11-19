@@ -3,12 +3,14 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { Category } from './categories.entity';
-import { Business } from './business.entity';
+// import { Business } from './business.entity';
+import { OrderDetail } from './order_detail.entity';
 
 @Entity({ name: 'products' })
 export class Product {
@@ -79,6 +81,9 @@ export class Product {
   @ManyToOne(() => Category, (category) => category.products)
   category: Category;
 
-  @ManyToOne(() => Business, (business) => business.products)
-  business: Business;
+  // @ManyToOne(() => Business, (business) => business.products)
+  // business: Business;
+
+  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.product)
+  orderProducts: OrderDetail[];
 }

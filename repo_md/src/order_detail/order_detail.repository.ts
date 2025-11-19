@@ -5,7 +5,6 @@ import { OrderDetail } from 'src/entities/order_detail.entity';
 import { Repository } from 'typeorm';
 import { CreateOrderDetailDto } from './dto/create-order-detail.dto';
 import { Product } from 'src/entities/products.entity';
-import { UpdateOrderDetailDto } from './dto/update-order-detail.dto';
 
 @Injectable()
 export class OrderDetailRepository {
@@ -13,27 +12,44 @@ export class OrderDetailRepository {
     @InjectRepository(OrderDetail)
     private readonly orderDetailDataBase: Repository<OrderDetail>,
     @InjectRepository(Order) private readonly orderDataBase: Repository<Order>,
+    @InjectRepository(Product)
+    private readonly productDataBase: Repository<Product>,
   ) {}
 
-  async create(detail: Partial<OrderDetail>): Promise<OrderDetail> {
-    const entity = this.orderDetailDataBase.create(detail);
-    return this.orderDetailDataBase.save(entity);
+  async create(CreateOrderDetailDto: CreateOrderDetailDto) {
+    const order = await this.orderDataBase.findOne({
+      where: { uuid_order: CreateOrderDetailDto.uuid_order },
+    });
+
+    const product = await this.productDataBase.findOne({
+      where: { uuid: CreateOrderDetailDto.uuid_product },
+    });
+
+    if (!order || !product) {
+      throw new NotFoundException('Orden o Producto no encontrado');
+    }
+
+    const newOrderProduct = this.orderDetailDataBase.create({
+      ...CreateOrderDetailDto,
+      order: order,
+      product: product,
+    });
+
+    return this.orderDetailDataBase.save(newOrderProduct);
   }
 
-  async findAll(): Promise<OrderDetail[]> {
-    return this.orderDetailDataBase.find({ relations: ['uuid_order'] });
+  async getAll() {
+    return await this.orderDetailDataBase.find({ relations: ['uuid_order'] });
   }
 
-  async findById(id: string): Promise<OrderDetail> {
-    const found = await this.orderDetailDataBase.findOne({
+  async getById(id: string) {
+    return await this.orderDetailDataBase.findOne({
       where: { uuid_order_detail: id },
       relations: ['uuid_order'],
     });
-    if (!found) throw new NotFoundException(`OrderDetail ${id} not found`);
-    return found;
   }
 
-  async update(id: string, data: UpdateOrderDetailDto) {
+  async update(id: string, data: OrderDetail) {
     const updateData = { ...data };
     if (data.product.uuid) {
       const product = await this.productDataBase.findOne({
@@ -52,9 +68,12 @@ export class OrderDetailRepository {
 
     await this.orderDetailDataBase.update(
       { uuid_order_detail: id },
-      data as any,
+      updateData,
     );
-    return this.findById(id);
+    return await this.orderDetailDataBase.findOne({
+      where: { uuid_order_detail: id },
+      relations: ['order', 'product'],
+    });
   }
 
   async remove(id: string): Promise<void> {

@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from 'src/entities/order.entity';
+import { OrderDetailRepository } from 'src/order_detail/order_detail.repository';
 import { Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/createOrder.dto';
 import { User } from 'src/entities/user.entity';
@@ -14,7 +15,7 @@ export class OrderRepository {
   constructor(
     @InjectRepository(Order) private readonly orderDataBase: Repository<Order>,
     @InjectRepository(User) private readonly userDataBase: Repository<User>,
-    private readonly OrderDetailService: OrderDetailService,
+    private readonly orderDetailRepository: OrderDetailRepository,
   ) {}
 
   async createOrder(CreateOrderDto: CreateOrderDto) {
@@ -49,11 +50,15 @@ export class OrderRepository {
     // merge basic fields
     const { order_details, ...orderFields } = updateOrderDto;
     orderExisting = { ...orderExisting, ...orderFields };
-    const orderSaved = await this.orderDataBase.save(orderExisting);
+    await this.orderDataBase.save(orderExisting);
 
     // If order_details are provided, sync them: create new, update existing, delete removed
     if (Array.isArray(order_details)) {
-      const existingDetails = orderSaved.order_details ?? [];
+      const existingDetails = orderExisting.order_details ?? [];
+
+      // Map existing by id for quick lookup
+      const existingMap = new Map<string, any>();
+      for (const d of existingDetails) existingMap.set(d.uuid_order_detail, d);
 
       const incomingIds = new Set<string>();
 
@@ -63,7 +68,7 @@ export class OrderRepository {
           incomingIds.add(item.uuid_order_detail);
           // do not allow changing order on detail here
           const { uuid_order_detail, ...detailUpdate } = item;
-          await this.OrderDetailService.update(
+          await this.orderDetailRepository.update(
             uuid_order_detail,
             detailUpdate,
           );

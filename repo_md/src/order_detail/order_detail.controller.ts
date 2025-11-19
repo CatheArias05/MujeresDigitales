@@ -4,39 +4,38 @@ import {
   Delete,
   Get,
   Param,
+  ParseUUIDPipe,
   Post,
-  Put,
 } from '@nestjs/common';
 import { OrderDetailService } from './order_detail.service';
 import { CreateOrderDetailDto } from './dto/create-order-detail.dto';
-import { UpdateOrderDetailDto } from './dto/update-order-detail.dto';
 
 @Controller('order-detail')
 export class OrderDetailController {
-  constructor(private readonly orderService: OrderDetailService) {}
+  constructor(private readonly orderDetailService: OrderDetailService) {}
 
   @Post()
-  create(@Body() body: CreateOrderDetailDto) {
-    return this.orderService.create(body as any);
+  create(@Body() CreateOrderDetailDto: CreateOrderDetailDto) {
+    return this.orderDetailService.create(CreateOrderDetailDto);
   }
 
   @Get()
-  findAll() {
-    return this.orderService.findAll();
+  getAll() {
+    return this.orderDetailService.getAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.orderService.findOne(id);
+  getById(@Param('id', ParseUUIDPipe) id: string) {
+    return this.orderDetailService.getById(id);
   }
 
-  @Put(':id')
-  update(@Param('id') id: string, @Body() body: UpdateOrderDetailDto) {
-    return this.orderService.update(id, body as any);
+  @Get(':id')
+  getByOrderId(@Param('id', ParseUUIDPipe) id: string) {
+    return this.orderDetailService.getByOrderId(id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.orderService.remove(id);
+  delete(@Param('id', ParseUUIDPipe) id: string) {
+    return this.orderDetailService.remove(id);
   }
 }

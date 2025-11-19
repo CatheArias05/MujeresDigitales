@@ -1,11 +1,13 @@
-import { IsNumber, IsOptional, IsPositive, IsUUID, Min } from 'class-validator';
+import { IsNumber, IsOptional, IsPositive, Min, IsUUID } from 'class-validator';
 
-export class CreateOrderDetailDto {
+export class OrderDetailItemDto {
+  @IsOptional()
   @IsUUID()
-  uuid_order: string;
+  uuid_order_detail?: string;
 
+  @IsOptional()
   @IsUUID()
-  uuid_product: string;
+  uuid_product?: string;
 
   @IsNumber()
   @Min(1)

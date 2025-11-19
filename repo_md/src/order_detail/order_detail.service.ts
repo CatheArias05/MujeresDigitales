@@ -1,29 +1,36 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { OrderDetailRepository } from './order_detail.repository';
-import { OrderDetail } from 'src/entities/order_detail.entity';
-import { UpdateOrderDetailDto } from './dto/update-order-detail.dto';
+import { CreateOrderDetailDto } from './dto/create-order-detail.dto';
+import { OrderRepository } from 'src/order/order.repository';
 
 @Injectable()
 export class OrderDetailService {
-  constructor(private readonly orderRepository: OrderDetailRepository) {}
+  constructor(
+    private readonly orderDetailRepository: OrderDetailRepository,
+    private readonly orderRepository: OrderRepository,
+  ) {}
 
-  create(detail: Partial<OrderDetail>) {
-    return this.orderRepository.create(detail);
+  create(CreateOrderDetailDto: CreateOrderDetailDto) {
+    return this.orderDetailRepository.create(CreateOrderDetailDto);
   }
 
-  findAll() {
-    return this.orderRepository.findAll();
+  getAll() {
+    return this.orderDetailRepository.getAll();
   }
 
-  findOne(id: string) {
-    return this.orderRepository.findById(id);
+  async getById(id: string) {
+    const orderDetailExisting = await this.orderDetailRepository.getById(id);
+    if (!orderDetailExisting) {
+      throw new NotFoundException('Este detalle de orden no existe');
+    }
+    return orderDetailExisting;
   }
 
-  update(id: string, data: UpdateOrderDetailDto) {
-    return this.orderRepository.update(id, data);
+  getByOrderId(OrderId: string) {
+    return this.orderRepository.getById(OrderId);
   }
 
   remove(id: string) {
-    return this.orderRepository.remove(id);
+    return this.orderDetailRepository.remove(id);
   }
 }
