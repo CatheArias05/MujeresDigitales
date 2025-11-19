@@ -7,11 +7,16 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateProductDto } from './dtos/createProduct.dto';
 import { UpdateProductDto } from './dtos/updateProduct.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProductService } from './product.service';
+import { AuthGuard } from 'src/auth/Guards/auth.guard';
+import { RolesGuard } from 'src/auth/Guards/roles.guard';
+import { Role } from 'src/decorators/roles.decorator';
+import { Roles } from 'src/enum/roles.enum';
 
 @ApiTags('Productos')
 @Controller('products')
@@ -31,7 +36,7 @@ export class ProductController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(UserRoles.ADMIN, UserRoles.PRODUCER)
+  @Role(Roles.ADMIN)
   @Get('getProduct/:uuid')
   getProductById(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.productsService.getProductById(uuid);
@@ -65,7 +70,8 @@ export class ProductController {
   })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiBearerAuth()
-  @Roles(UserRoles.ADMIN, UserRoles.PRODUCER)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Role(Roles.ADMIN, Roles.PRODUCER)
   @Post('createProduct')
   postCreateProduct(@Body() createProductDto: CreateProductDto) {
     return this.productsService.postCreateProduct(createProductDto);
@@ -88,7 +94,8 @@ export class ProductController {
   })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiBearerAuth()
-  @Roles(UserRoles.ADMIN, UserRoles.PRODUCER)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Role(Roles.ADMIN, Roles.PRODUCER)
   @Put('updateProduct')
   putUpdateProduct(@Body() updateProductDto: UpdateProductDto) {
     return this.productsService.putUpdateProduct(updateProductDto);
@@ -110,7 +117,8 @@ export class ProductController {
   })
   @ApiResponse({ status: 500, description: 'Error interno del servidor.' })
   @ApiBearerAuth()
-  @Roles(UserRoles.ADMIN, UserRoles.PRODUCER)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Role(Roles.ADMIN, Roles.PRODUCER)
   @Delete('deleteProduct/:uuid')
   deleteProduct(@Param('uuid', ParseUUIDPipe) uuid: string) {
     return this.productsService.deleteProduct(uuid);

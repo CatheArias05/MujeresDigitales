@@ -8,6 +8,8 @@ import { UpdateProductDto } from './dtos/updateProduct.dto';
 import { Category } from '../entities/categories.entity';
 import { ProductRepository } from './repository';
 import { CategoryRepository } from 'src/category/repository';
+import { Business } from 'src/entities/business.entity';
+import { BusinessRepository } from 'src/business/repository';
 
 @Injectable()
 export class ProductService {
@@ -75,7 +77,7 @@ export class ProductService {
     const existingBusiness = await this.businessRepository.findBusinessByUuid(
       createProductDto.businessUuid,
     );
-    if (!existingBusiness || !existingBusiness.isActive) {
+    if (!existingBusiness || !existingBusiness.estado) {
       throw new NotFoundException('No existe un negocio válido con ese UUID');
     }
 
@@ -140,7 +142,7 @@ export class ProductService {
         updateProductDto.businessUuid,
       );
 
-      if (!existingBusiness || !existingBusiness.isActive) {
+      if (!existingBusiness || !existingBusiness.estado) {
         throw new NotFoundException('No existe un negocio válido con ese UUID');
       }
 

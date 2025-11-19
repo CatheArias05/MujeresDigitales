@@ -1,6 +1,7 @@
 import { CreateCategoryDto } from './createCategory.dto';
 import { IsNotEmpty, IsUUID } from 'class-validator';
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
+import { PartialType } from '@nestjs/mapped-types';
 
 export class UpdateCategoryDto extends PartialType(CreateCategoryDto) {
   @ApiProperty({
