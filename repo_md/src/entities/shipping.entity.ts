@@ -4,7 +4,10 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Order } from './order.entity';
 
 export enum EstadoEnvio {
   PENDIENTE = 'pendiente',
@@ -17,8 +20,9 @@ export class Shipping {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
-  @Column({ type: 'varchar', length: 36 })
-  uuid_orden_de_compra: string;
+  @ManyToOne(() => Order, (order) => order.shippings)
+  @JoinColumn({ name: 'uuid_orden_de_compra' })
+  order: Order;
 
   @Column({ type: 'timestamp', nullable: true })
   fecha_emision: Date;

@@ -11,7 +11,12 @@ import {
 } from '@nestjs/common';
 import { CreateProductDto } from './dtos/createProduct.dto';
 import { UpdateProductDto } from './dtos/updateProduct.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ProductService } from './product.service';
 import { AuthGuard } from 'src/auth/Guards/auth.guard';
 import { RolesGuard } from 'src/auth/Guards/roles.guard';

@@ -43,13 +43,14 @@ export class BusinessRepository {
 
   async getBusinessByUserUuid(uuid_usuario: string) {
     return await this.businessDataBase.findOne({
-      where: { uuid_usuario },
+      where: { user: { uuid_user: uuid_usuario } },
+      relations: ['user'],
     });
   }
 
   async createBusinessRepository(createBusinessDto: any) {
     const newBusiness = this.businessDataBase.create({
-      uuid_usuario: createBusinessDto.uuid_usuario,
+      user: { uuid_user: createBusinessDto.uuid_usuario } as any,
       registro_negocio: createBusinessDto.registro_negocio,
       nombre_negocio: createBusinessDto.nombre_negocio,
       ubicacion: createBusinessDto.ubicacion,
@@ -68,7 +69,9 @@ export class BusinessRepository {
     updateBusinessDto: any,
   ) {
     if (updateBusinessDto.uuid_usuario) {
-      businessExisting.uuid_usuario = updateBusinessDto.uuid_usuario;
+      businessExisting.user = {
+        uuid_user: updateBusinessDto.uuid_usuario,
+      } as any;
     }
     if (updateBusinessDto.registro_negocio) {
       businessExisting.registro_negocio = updateBusinessDto.registro_negocio;

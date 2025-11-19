@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Shipping, EstadoEnvio } from '../entities/shipping.entity';
+import { CreatedShippingDto } from './Dtos/createShipping.dto';
+import { UpdateShippingDto } from './Dtos/updateShipping.dto';
+import { Order } from '../entities/order.entity';
 
 @Injectable()
 export class ShippingRepository {
@@ -26,30 +29,38 @@ export class ShippingRepository {
 
   async getShippingByOrderUuid(orderUuid: string) {
     return await this.shippingDataBase.findOne({
-      where: { uuid_orden_de_compra: orderUuid },
+      where: { order: { uuid_order: orderUuid } },
+      relations: ['order'],
     });
   }
 
-  async createShippingRepository(createShippingDto: any) {
+  async createShippingRepository(createShippingDto: CreatedShippingDto) {
+    const orderRef = new Order();
+    orderRef.uuid_order = createShippingDto.uuid_orden_de_compra;
     const newShipping = this.shippingDataBase.create({
-      uuid_orden_de_compra: createShippingDto.uuid_orden_de_compra,
-      fecha_emision: createShippingDto.fecha_emision ?? new Date(),
-      fecha_entrega: createShippingDto.fecha_entrega ?? null,
+      order: orderRef,
+      fecha_emision: createShippingDto.fecha_emision
+        ? new Date(createShippingDto.fecha_emision)
+        : new Date(),
+      fecha_entrega: createShippingDto.fecha_entrega
+        ? new Date(createShippingDto.fecha_entrega)
+        : undefined,
       estado_envio: createShippingDto.estado_envio ?? EstadoEnvio.PENDIENTE,
     });
     await this.shippingDataBase.save(newShipping);
     return {
-      message: `Envio creado para la orden ${newShipping.uuid_orden_de_compra}`,
+      message: `Envio creado para la orden ${createShippingDto.uuid_orden_de_compra}`,
     };
   }
 
   async putUpdateShippingRepository(
     shippingExisting: Shipping,
-    updateShippingDto: any,
+    updateShippingDto: UpdateShippingDto,
   ) {
     if (updateShippingDto.uuid_orden_de_compra) {
-      shippingExisting.uuid_orden_de_compra =
-        updateShippingDto.uuid_orden_de_compra;
+      const orderRef = new Order();
+      orderRef.uuid_order = updateShippingDto.uuid_orden_de_compra;
+      shippingExisting.order = orderRef;
     }
     if (updateShippingDto.fecha_emision) {
       shippingExisting.fecha_emision = new Date(

@@ -4,15 +4,21 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Product } from './products.entity';
+import { User } from './user.entity';
 
 @Entity({ name: 'business' })
 export class Business {
   @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
-  @Column({ type: 'varchar', length: 36 })
-  uuid_usuario: string;
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'uuid_usuario' })
+  user: User;
 
   @Column({ type: 'varchar', length: 100, unique: true })
   registro_negocio: string;
@@ -34,4 +40,7 @@ export class Business {
 
   @UpdateDateColumn({ type: 'timestamp', nullable: true })
   fecha_actualizacion: Date;
+
+  @OneToMany(() => Product, (product) => product.business)
+  products: Product[];
 }

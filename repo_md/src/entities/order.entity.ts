@@ -13,6 +13,7 @@ import {
   //   ManyToOne,
 } from 'typeorm';
 import { OrderDetail } from './order_detail.entity';
+import { Shipping } from './shipping.entity';
 import { User } from './user.entity';
 // import { User } from './users.entity';
 
@@ -67,8 +68,11 @@ export class Order {
     type: 'timestamp',
     nullable: true,
   })
-  date_updated: Date;
+  date_updated: Date | null;
 
   @OneToMany(() => OrderDetail, (orderDetails) => orderDetails.uuid_order)
   order_details: OrderDetail[];
+
+  @OneToMany(() => Shipping, (shipping) => shipping.order)
+  shippings: Shipping[];
 }

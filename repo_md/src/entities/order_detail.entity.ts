@@ -1,17 +1,12 @@
 import {
   Entity,
   PrimaryGeneratedColumn,
-  //   JoinColumn,
   Column,
   ManyToOne,
   JoinColumn,
-  // OneToMany,
-  //   ManyToOne,
 } from 'typeorm';
 import { Order } from './order.entity';
-// import { User } from './users.entity';
-// import { OrderStatus } from 'src/enum/orderStatus.enum';
-// import { OrderProduct } from './order_product.entity';
+import { Product } from './products.entity';
 
 @Entity({ name: 'orderDetails' })
 export class OrderDetail {
@@ -22,9 +17,9 @@ export class OrderDetail {
   @JoinColumn({ name: 'uuid_order' })
   uuid_order: Order;
 
-  // @ManyToOne(() => Product, (product) => product.orderProducts)
-  // @JoinColumn({ name: 'uuid_product' })
-  // product: Product;
+  @ManyToOne(() => Product)
+  @JoinColumn({ name: 'uuid_product' })
+  product: Product;
 
   @Column({
     type: 'int',
@@ -62,5 +57,5 @@ export class OrderDetail {
     type: 'timestamp',
     nullable: true,
   })
-  date_updated: Date;
+  date_updated: Date | null;
 }

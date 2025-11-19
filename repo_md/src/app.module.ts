@@ -1,6 +1,15 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService, DataLouderUser } from './app.service';
+import {
+  AppService,
+  DataLouderUser,
+  DataLoaderCategory,
+  DataLoaderBusiness,
+  DataLoaderProduct,
+  DataLoaderOrder,
+  DataLoaderOrderDetail,
+  DataLoaderShipping,
+} from './app.service';
 import { UserModule } from './user/user.module';
 import { UserController } from './user/user.controller';
 import { UserService } from './user/user.service';
@@ -16,9 +25,7 @@ import { ProductService } from './product/product.service';
 import { CategoryModule } from './category/category.module';
 import { CategoryController } from './category/category.controller';
 import { CategoryService } from './category/category.service';
-import { CartModule } from './cart/cart.module';
-import { CartController } from './cart/cart.controller';
-import { CartService } from './cart/cart.service';
+// removed CartModule and related imports
 import { OrderModule } from './order/order.module';
 import { OrderController } from './order/order.controller';
 import { OrderService } from './order/order.service';
@@ -31,6 +38,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrderDetailModule } from './order_detail/order_detail.module';
 import { User } from './entities/user.entity';
 import { Credential } from './entities/credential.entity';
+import { Category } from './entities/categories.entity';
+import { Business } from './entities/business.entity';
+import { Product } from './entities/products.entity';
+import { Order } from './entities/order.entity';
+import { OrderDetail } from './entities/order_detail.entity';
+import { Shipping } from './entities/shipping.entity';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 
@@ -44,13 +57,21 @@ import { JwtModule } from '@nestjs/jwt';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => config.get('typeorm') ?? {},
     }),
-    TypeOrmModule.forFeature([User, Credential]),
+    TypeOrmModule.forFeature([
+      User,
+      Credential,
+      Category,
+      Business,
+      Product,
+      Order,
+      OrderDetail,
+      Shipping,
+    ]),
     UserModule,
     CredentialModule,
     BusinessModule,
     ProductModule,
     CategoryModule,
-    CartModule,
     OrderModule,
     ShippingModule,
     OrderDetailModule,
@@ -61,28 +82,16 @@ import { JwtModule } from '@nestjs/jwt';
       signOptions: { expiresIn: '1h' },
     }),
   ],
-  controllers: [
-    AppController,
-    UserController,
-    CredentialController,
-    BusinessController,
-    ProductController,
-    CategoryController,
-    CartController,
-    OrderController,
-    ShippingController,
-  ],
+  controllers: [AppController],
   providers: [
     AppService,
     DataLouderUser,
-    UserService,
-    CredentialService,
-    BusinessService,
-    ProductService,
-    CategoryService,
-    CartService,
-    OrderService,
-    ShippingService,
+    DataLoaderCategory,
+    DataLoaderBusiness,
+    DataLoaderProduct,
+    DataLoaderOrder,
+    DataLoaderOrderDetail,
+    DataLoaderShipping,
   ],
 })
 export class AppModule {}

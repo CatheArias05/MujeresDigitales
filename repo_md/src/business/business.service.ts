@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { BusinessRepository } from './business.repository';
+import { BusinessRepository } from './repository';
 import { CreatedBusinessDto } from './Dtos/createBusiness.dto';
 import { UpdateBusinessDto } from './Dtos/updateBusiness.dto';
 

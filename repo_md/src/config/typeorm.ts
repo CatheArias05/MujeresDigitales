@@ -12,9 +12,9 @@ const config: DataSourceOptions = {
   password: process.env.DB_PASSWORD,
   entities: ['dist/**/*.entity.js'],
   migrations: ['dist/migrations/*{.ts, .js}'],
-  logging: true,
-  synchronize: true,
-  dropSchema: true,
+  logging: false,
+  synchronize: false,
+  dropSchema: false,
 };
 
 export default registerAs('typeorm', () => config);
